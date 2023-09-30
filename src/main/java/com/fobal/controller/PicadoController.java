@@ -110,4 +110,11 @@ public class PicadoController implements Serializable {
 
 	}
 
+	@PostMapping("/{idPicado}/finalizar")
+	public ResponseEntity<PicadoEntity> finalizarPicado(@PathVariable Integer idPicado) {
+		
+		PicadoEntity picado = picadoService.finalizarPicado(idPicado);
+		return new ResponseEntity<>(picado, HttpStatus.OK);
+	}
+
 }

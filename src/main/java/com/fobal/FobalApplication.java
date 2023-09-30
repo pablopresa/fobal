@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import com.fobal.model.Medida;
 import com.fobal.repository.entity.CanchaEntity;
 import com.fobal.repository.entity.HabilidadEntity;
 import com.fobal.repository.entity.PicadoEntity;
@@ -166,15 +167,15 @@ public class FobalApplication {
 		List<UsuarioHabilidadEntity> habilidadesUsuario12 = Arrays.asList(usuario12Habilidad1, usuario12Habilidad2,
 				usuario12Habilidad3, usuario12Habilidad4, usuario12Habilidad5, usuario12Habilidad6);
 
-		UsuarioEntity yo = usuarioService.guardar(new UsuarioEntity("Pablo Presa", "Pablin", tipoAdmin));
-		UsuarioHabilidadEntity miHabilidad1 = new UsuarioHabilidadEntity(yo, definicion, randomStat());
-		UsuarioHabilidadEntity miHabilidad2 = new UsuarioHabilidadEntity(yo, magia, randomStat());
-		UsuarioHabilidadEntity miHabilidad3 = new UsuarioHabilidadEntity(yo, tiro, randomStat());
-		UsuarioHabilidadEntity miHabilidad4 = new UsuarioHabilidadEntity(yo, defensa, randomStat());
-		UsuarioHabilidadEntity miHabilidad5 = new UsuarioHabilidadEntity(yo, habilitaJuego, randomStat());
-		UsuarioHabilidadEntity miHabilidad6 = new UsuarioHabilidadEntity(yo, estadoFisico, randomStat());
-		List<UsuarioHabilidadEntity> misHabilidades = Arrays.asList(miHabilidad1, miHabilidad2, miHabilidad3,
-				miHabilidad4, miHabilidad5, miHabilidad6);
+//		UsuarioEntity yo = usuarioService.guardar(new UsuarioEntity("Pablo Presa", "Pablin", tipoAdmin));
+//		UsuarioHabilidadEntity miHabilidad1 = new UsuarioHabilidadEntity(yo, definicion, randomStat());
+//		UsuarioHabilidadEntity miHabilidad2 = new UsuarioHabilidadEntity(yo, magia, randomStat());
+//		UsuarioHabilidadEntity miHabilidad3 = new UsuarioHabilidadEntity(yo, tiro, randomStat());
+//		UsuarioHabilidadEntity miHabilidad4 = new UsuarioHabilidadEntity(yo, defensa, randomStat());
+//		UsuarioHabilidadEntity miHabilidad5 = new UsuarioHabilidadEntity(yo, habilitaJuego, randomStat());
+//		UsuarioHabilidadEntity miHabilidad6 = new UsuarioHabilidadEntity(yo, estadoFisico, randomStat());
+//		List<UsuarioHabilidadEntity> misHabilidades = Arrays.asList(miHabilidad1, miHabilidad2, miHabilidad3,
+//				miHabilidad4, miHabilidad5, miHabilidad6);
 
 		habilidadService.guardar(habilidadesUsuario1);
 		habilidadService.guardar(habilidadesUsuario2);
@@ -188,12 +189,12 @@ public class FobalApplication {
 		habilidadService.guardar(habilidadesUsuario10);
 		habilidadService.guardar(habilidadesUsuario11);
 		habilidadService.guardar(habilidadesUsuario12);
-		habilidadService.guardar(misHabilidades);
+//		habilidadService.guardar(misHabilidades);
 
 		List<UsuarioEntity> jugadores = Arrays.asList(usuario1, usuario2, usuario3, usuario4, usuario5, usuario6,
 				usuario7, usuario8, usuario9);
 
-		CanchaEntity cancha1 = canchaService.guardar(new CanchaEntity("Central 5", 30, 20));
+		CanchaEntity cancha1 = canchaService.guardar(new CanchaEntity("Central 5", Medida.MEDIANA));
 
 		PicadoEntity picado1 = picadoService.guardar(new PicadoEntity(cancha1, new Date()));
 

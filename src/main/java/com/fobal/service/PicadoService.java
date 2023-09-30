@@ -10,11 +10,15 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fobal.model.UsuarioPar;
 import com.fobal.repository.CanchaRepository;
 import com.fobal.repository.PicadoRepository;
+import com.fobal.repository.UsuarioPicadoRepository;
 import com.fobal.repository.UsuarioRepository;
+import com.fobal.repository.entity.CanchaEntity;
 import com.fobal.repository.entity.PicadoEntity;
 import com.fobal.repository.entity.UsuarioEntity;
+import com.fobal.repository.entity.UsuarioPicadoEntity;
 import com.fobal.util.Util;
 
 @Service
@@ -25,19 +29,26 @@ public class PicadoService {
 	PicadoRepository picadoRepository;
 	CanchaRepository canchaRepository;
 	UsuarioRepository usuarioRepository;
+	UsuarioPicadoRepository usuarioPicadoRepository;
 
 	@Autowired
 	public PicadoService(PicadoRepository picadoRepository, CanchaRepository canchaRepository,
-			UsuarioRepository usuarioRepository) {
+			UsuarioRepository usuarioRepository, UsuarioPicadoRepository usuarioPicadoRepository) {
 
 		this.picadoRepository = picadoRepository;
 		this.canchaRepository = canchaRepository;
 		this.usuarioRepository = usuarioRepository;
+		this.usuarioPicadoRepository = usuarioPicadoRepository;
 	}
 
 	public PicadoEntity guardar(PicadoEntity picado) {
 
 		return picadoRepository.save(picado);
+	}
+
+	public UsuarioPicadoEntity guardar(UsuarioPicadoEntity picado) {
+
+		return usuarioPicadoRepository.save(picado);
 	}
 
 	public PicadoEntity obtenerPicado(Integer idPicado) {
@@ -113,7 +124,7 @@ public class PicadoService {
 							combinacion.add(jugadoresBdd.get(m));
 
 //							Obtengo la valoración del equipo
-							double suma = obtenerValoracionEquipo(combinacion);
+							double suma = obtenerValoracionEquipo(combinacion, picado.getCancha());
 
 //							Agrego la valoración del equipo a la suma
 //							total de valoraciones
@@ -176,29 +187,69 @@ public class PicadoService {
 		return numeroMasCercano;
 	}
 
-	private Double obtenerValoracionEquipo(List<UsuarioEntity> jugadores) {
+	private Double obtenerValoracionEquipo(List<UsuarioEntity> jugadores, CanchaEntity cancha) {
 
+		Map<UsuarioPar, Integer> diferencias = new HashMap<>();
 		for (int i = 0; i < jugadores.size(); i++) {
 			UsuarioEntity jugador1 = jugadores.get(i);
 			for (int j = 0; j < jugadores.size(); j++) {
 				UsuarioEntity jugador2 = jugadores.get(j);
-				if (!jugador1.equals(jugador2)) {
-					List<PicadoEntity> picadosCompartidos = jugador1.getHistorial().stream()
-							.filter(x -> x.getUsuarios().contains(jugador2)).toList();
-					
-//					TODO: Hacer algo con el historial
+
+				UsuarioPar par = new UsuarioPar(jugador1, jugador2);
+
+				if (!jugador1.equals(jugador2) && !diferencias.containsKey(par)) {
+
+					List<UsuarioPicadoEntity> picadosCompartidos = jugador1.getHistorial().stream()
+							.filter(x -> x.getPicado().getUsuarios().contains(jugador2)).toList();
+
+					Integer ganados = Integer
+							.parseInt(picadosCompartidos.stream().filter(x -> x.isGanado()).count() + "");
+
+					Integer perdidos = picadosCompartidos.size() - ganados;
+
+					Integer diferencia = ganados - perdidos;
+
+					diferencias.put(par, diferencia);
 				}
 			}
 		}
 		return jugadores.stream().mapToDouble(UsuarioEntity::getValoracionGeneral).sum();
 	}
 
-	public PicadoEntity finalizarPicado(PicadoEntity picado) {
+	public PicadoEntity finalizarPicado(Integer idPicado) {
 
-		PicadoEntity picadoBdd = obtenerPicado(picado.getId());
+		PicadoEntity picadoBdd = obtenerPicado(idPicado);
+
+		marcarGanadores(picadoBdd.getEquipo1(), picadoBdd);
+		marcarPerdedores(picadoBdd.getEquipo2(), picadoBdd);
 
 		picadoBdd.setFinalizado(true);
 		return guardar(picadoBdd);
+	}
+
+	private void marcarGanadores(List<UsuarioEntity> jugadores, PicadoEntity picado) {
+		
+		marcarJugadores(jugadores, picado, true);
+	}
+
+	private void marcarPerdedores(List<UsuarioEntity> jugadores, PicadoEntity picado) {
+
+		marcarJugadores(jugadores, picado, false);
+	}
+	
+	private void marcarJugadores(List<UsuarioEntity> jugadores, PicadoEntity picado, boolean ganado) {
+		UsuarioPicadoEntity usuarioPicado = new UsuarioPicadoEntity();
+		usuarioPicado.setPicado(picado);
+
+		for(UsuarioEntity jugador : jugadores) {
+			usuarioPicado.setUsuario(jugador);
+			usuarioPicado.setGanado(ganado);
+			jugador.getHistorial().add(usuarioPicado);
+			
+			guardar(usuarioPicado);
+
+			usuarioRepository.save(jugador);
+		}
 	}
 
 }

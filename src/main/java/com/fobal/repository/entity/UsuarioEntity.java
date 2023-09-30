@@ -35,7 +35,7 @@ public class UsuarioEntity implements Serializable {
 	@Column(name = "alias")
 	private String alias;
 	@JdbcType(VarbinaryJdbcType.class)
-	@JsonIgnore
+//	@JsonIgnore
 	@Column(name = "password")
 	private byte[] password;
 	@ManyToOne
@@ -66,8 +66,8 @@ public class UsuarioEntity implements Serializable {
 	@JoinColumn(name = "picado_equipo2")
 	private PicadoEntity equipo2;
 	
-	@OneToMany(mappedBy = "jugador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<PicadoEntity> historial;
+    @OneToMany(mappedBy = "usuario")
+    private List<UsuarioPicadoEntity> historial;
 
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<UsuarioHabilidadEntity> habilidades;
@@ -176,11 +176,11 @@ public class UsuarioEntity implements Serializable {
 		this.valoracionGeneral = valoracionGeneral;
 	}
 	
-	public List<PicadoEntity> getHistorial() {
+	public List<UsuarioPicadoEntity> getHistorial() {
 		return historial;
 	}
 
-	public void setHistorial(List<PicadoEntity> historial) {
+	public void setHistorial(List<UsuarioPicadoEntity> historial) {
 		this.historial = historial;
 	}
 
@@ -214,6 +214,7 @@ public class UsuarioEntity implements Serializable {
 		List<UsuarioHabilidadEntity> habilidades = getHabilidades();
 		Double promedio = 0.0;
 		for (UsuarioHabilidadEntity habilidad : habilidades) {
+			
 			promedio += habilidad.getHabilidad().getPeso() * habilidad.getValor() / 10;
 
 		}

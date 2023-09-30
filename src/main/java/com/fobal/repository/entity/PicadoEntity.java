@@ -44,6 +44,9 @@ public class PicadoEntity implements Serializable {
 	@JoinColumn(name = "jugador")
 	private UsuarioEntity jugador;
 	
+    @OneToMany(mappedBy = "picado")
+    private List<UsuarioPicadoEntity> usuarioPicadoList;
+	
 	@OneToMany(mappedBy = "picado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<UsuarioEntity> usuarios;
 
@@ -63,6 +66,7 @@ public class PicadoEntity implements Serializable {
 		this.fecha = fecha;
 		this.picadoLevel = 0.0;
 		this.completo = false;
+		this.finalizado = false;
 		this.usuarios = new ArrayList<>();
 	}
 	
