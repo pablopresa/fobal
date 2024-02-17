@@ -78,7 +78,7 @@ public class PicadoController implements Serializable {
 	}
 
 	@PatchMapping("/{idPicado}")
-	public ResponseEntity<PicadoEntity> agregarJugadores(@RequestBody List<UsuarioEntity> usuarios,
+	public ResponseEntity<PicadoEntity> agregarJugadores(@RequestBody List<Integer> usuarios,
 			@PathVariable Integer idPicado) {
 
 		PicadoEntity picado = picadoService.obtenerPicado(idPicado);
@@ -91,9 +91,9 @@ public class PicadoController implements Serializable {
 			return new ResponseEntity<>(HttpStatus.PRECONDITION_FAILED);
 		}
 		List<UsuarioEntity> usuariosBdd = new ArrayList<>();
-		for (UsuarioEntity usuario : usuarios) {
+		for (Integer usuario : usuarios) {
 
-			UsuarioEntity jugador = usuarioService.obtenerPorId(usuario.getId());
+			UsuarioEntity jugador = usuarioService.obtenerPorId(usuario);
 			if (jugador != null) {
 				usuariosBdd.add(jugador);
 			}
@@ -112,7 +112,7 @@ public class PicadoController implements Serializable {
 
 	@PostMapping("/{idPicado}/finalizar")
 	public ResponseEntity<PicadoEntity> finalizarPicado(@PathVariable Integer idPicado) {
-		
+
 		PicadoEntity picado = picadoService.finalizarPicado(idPicado);
 		return new ResponseEntity<>(picado, HttpStatus.OK);
 	}

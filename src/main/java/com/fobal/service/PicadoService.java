@@ -145,7 +145,7 @@ public class PicadoService {
 //		En un caso ideal, la suma de las valoraciones de los dos 
 //		equipos debería sumar la mitad de la valoración total,
 //		y así los dos equipos tendrían la misma valoración
-		Double sumaIdeal = Util.truncarDouble(sumaTotal / 2, 1);
+		Double sumaIdeal = Util.truncarDouble(sumaTotal / cuentaCombinaciones, 1);
 
 //		Busco la combinación de cinco jugadores que se acerque más a la suma ideal
 		Double mejorSuma = encontrarNumeroMasCercano(resultados, sumaIdeal);
@@ -228,7 +228,7 @@ public class PicadoService {
 	}
 
 	private void marcarGanadores(List<UsuarioEntity> jugadores, PicadoEntity picado) {
-		
+
 		marcarJugadores(jugadores, picado, true);
 	}
 
@@ -236,16 +236,16 @@ public class PicadoService {
 
 		marcarJugadores(jugadores, picado, false);
 	}
-	
+
 	private void marcarJugadores(List<UsuarioEntity> jugadores, PicadoEntity picado, boolean ganado) {
 		UsuarioPicadoEntity usuarioPicado = new UsuarioPicadoEntity();
 		usuarioPicado.setPicado(picado);
 
-		for(UsuarioEntity jugador : jugadores) {
+		for (UsuarioEntity jugador : jugadores) {
 			usuarioPicado.setUsuario(jugador);
 			usuarioPicado.setGanado(ganado);
 			jugador.getHistorial().add(usuarioPicado);
-			
+
 			guardar(usuarioPicado);
 
 			usuarioRepository.save(jugador);

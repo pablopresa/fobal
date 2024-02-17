@@ -45,8 +45,10 @@ public class UsuarioEntity implements Serializable {
 	@JsonIgnore
 	@Column(name = "email")
 	private String email;
+	@JsonIgnore
 	@Column(name = "nickname")
 	private String nickname;
+	@JsonIgnore
 	@Column(name = "fecha_creacion")
 	private String fechaCreacion;
 	@Column(name = "valoracion_general")
@@ -68,7 +70,8 @@ public class UsuarioEntity implements Serializable {
 	
     @OneToMany(mappedBy = "usuario")
     private List<UsuarioPicadoEntity> historial;
-
+    
+    @JsonIgnore
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<UsuarioHabilidadEntity> habilidades;
 
